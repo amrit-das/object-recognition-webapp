@@ -2,8 +2,11 @@
 import streamlit as st
 
 # Python Packages
-import os
 from pathlib import Path
+
+# Custom Packages
+from utils import load, from_webcam, from_image
+import config
 
 # Streamlit Page Config
 st.set_page_config(
@@ -19,4 +22,18 @@ st.sidebar.header("Hyperparameter")
 
 conf = float(st.sidebar.slider("Model Confidence", 0, 100, 60)) / 100
 
-model_path = 
+# Model Definition
+model = load(config.MODEL_PATH / config.DET_MODEL_NAME)
+
+src = st.sidebar.radio("Recognize from:", ("Webcam", "Image", "Default"), index=2)
+
+if src == "Default":
+    pass
+# Capture Video From WebCam
+
+if src == "Webcam":
+    video = from_webcam(conf, model)
+elif src == "Image":
+    image = from_image(conf, model)
+else:
+    pass
