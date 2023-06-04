@@ -20,7 +20,7 @@ st.title("Object Recognition WebApp")
 
 st.sidebar.header("Hyperparameter")
 
-conf = float(st.sidebar.slider("Model Confidence", 0, 100, 60)) / 100
+conf = float(st.sidebar.slider("Model Confidence", 0, 100, 30)) / 100
 
 # Model Definition
 model = load(config.MODEL_PATH / config.DET_MODEL_NAME)

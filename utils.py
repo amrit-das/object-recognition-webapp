@@ -11,31 +11,29 @@ def load(model_path):
     return YOLO(model_path)
 
 
-def display_tracker_options():
-    display_tracker = st.sidebar.radio("Display Tracker", ("Yes", "No"))
-    is_display_tracker = True if display_tracker == "Yes" else False
-    if is_display_tracker:
-        tracker_type = st.sidebar.radio("Tracker", ("bytetrack.yaml", "botsort.yaml"))
-        return is_display_tracker, tracker_type
-    return is_display_tracker, None
+# def display_tracker_options():
+#     display_tracker = st.sidebar.radio("Display Tracker", ("Yes", "No"))
+#     is_display_tracker = True if display_tracker == "Yes" else False
+#     if is_display_tracker:
+#         tracker_type = st.sidebar.radio("Tracker", ("bytetrack.yaml", "botsort.yaml"))
+#         return is_display_tracker, tracker_type
+#     return is_display_tracker, None
 
 
-def _display_detected_frames(
-    conf, model, st_frame, image, is_display_tracking=None, tracker=None
-):
+def _display_detected_frames(conf, model, st_frame, image):
     image = cv2.resize(image, (640, 480))
-    if is_display_tracking:
-        res = model.track(image, conf=conf, persist=True, tracker=tracker)
-    else:
-        res = model.predict(image, conf=conf)
+    # if is_display_tracking:
+    #     res = model.track(image, conf=conf, persist=True, tracker=tracker)
+    # else:
+    res = model.predict(image, conf=conf)
     res_plotted = res[0].plot()
     st_frame.image(
-        res_plotted, caption="Detections", channels="BGR", use_column_width=True
+        res_plotted, caption="Detections", channels="BGR", use_column_width=False
     )
 
 
 def from_webcam(conf, model):
-    is_display_tracker, tracker = display_tracker_options()
+    # is_display_tracker, tracker = display_tracker_options()
     try:
         if st.sidebar.button("Start Recognition"):
             vid_cap = cv2.VideoCapture(0)
@@ -43,9 +41,9 @@ def from_webcam(conf, model):
             while vid_cap.isOpened():
                 success, image = vid_cap.read()
                 if success:
-                    _display_detected_frames(
-                        conf, model, st_frame, image, is_display_tracker, tracker
-                    )
+                    col1, col2, col3 = st.columns(3)
+                    with col2:
+                        _display_detected_frames(conf, model, st_frame, image)
                 else:
                     vid_cap.release()
                     break
